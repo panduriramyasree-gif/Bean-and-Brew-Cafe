@@ -1,0 +1,6 @@
+{
+  "name": "Bean & Brew Café",
+  "description": "Freshly Brewed. Made With Love. Explore artisanal coffees, specialty teas, gourmet bites, and sweet treats with seamless online ordering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
