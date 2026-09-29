@@ -193,6 +193,88 @@ Respond in strictly valid JSON format with:
   }
 });
 
+// --- 1.1 Real-Time Google Search Grounded Q&A Route ---
+app.post('/api/ai/ask-realtime', async (req: Request, res: Response) => {
+  try {
+    const { question, history } = req.body;
+
+    if (!question || typeof question !== 'string') {
+      return res.status(400).json({ error: 'Question is required' });
+    }
+
+    if (!aiClient) {
+      return res.json({
+        answer: "I am currently running in offline preview mode. Bean & Brew Café is open 7:30 AM to 10:30 PM on 100 Feet Road, Indiranagar, Bengaluru. Please configure the GEMINI_API_KEY for live web-grounded real-time answers.",
+        sources: [],
+        isGrounded: false
+      });
+    }
+
+    const systemInstruction = `You are the real-time AI Barista & Concierge for 'Bean & Brew Café' located on 100 Feet Road, Indiranagar, Bengaluru across Metro Pillar 114.
+Bean & Brew Café details:
+- Hours: Mon-Fri 7:30 AM - 10:30 PM, Sat-Sun 8:00 AM - 11:30 PM.
+- Sourcing: 100% shade-grown Arabica from Chikmagalur, roasted weekly on Mondays.
+- Menu highlights: Cappuccino (₹140), Single Origin Espresso (₹110), Caramel Hazelnut Latte (₹175), Signature Cold Coffee (₹160), Vietnamese Iced Coffee (₹170), Masala Chai (₹80), Avocado & Herb Toast (₹180), Sizzling Chocolate Brownie (₹130).
+- Loyalty: 10 points per ₹100 spent (10% cash back in points).
+
+When users ask questions that depend on real-time data, current events, weather, coffee market news, or Bengaluru local trends, use the Google Search grounding tool to provide fresh, accurate, grounded answers.
+Always be warm, helpful, and concise. Maintain coffee sommelier expertise.`;
+
+    const contents: any[] = [];
+    if (Array.isArray(history)) {
+      for (const msg of history.slice(-6)) {
+        if (msg.role && msg.content) {
+          contents.push({
+            role: msg.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: msg.content }]
+          });
+        }
+      }
+    }
+
+    contents.push({
+      role: 'user',
+      parts: [{ text: question }]
+    });
+
+    const response = await aiClient.models.generateContent({
+      model: 'gemini-3.8-flash',
+      contents,
+      config: {
+        systemInstruction,
+        tools: [{ googleSearch: {} }],
+      },
+    });
+
+    const answer = response.text || "I found the information for you!";
+    const groundingChunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks || [];
+    const searchQueries = response.candidates?.[0]?.groundingMetadata?.webSearchQueries || [];
+
+    const sources: { title: string; uri: string }[] = [];
+    for (const chunk of groundingChunks) {
+      if (chunk.web?.uri) {
+        sources.push({
+          title: chunk.web.title || chunk.web.uri,
+          uri: chunk.web.uri
+        });
+      }
+    }
+
+    return res.json({
+      answer,
+      sources,
+      searchQueries,
+      isGrounded: sources.length > 0
+    });
+  } catch (error: any) {
+    console.error('Gemini Real-time Search Error:', error);
+    return res.status(500).json({
+      error: 'Failed to access real-time data',
+      message: error.message || 'An error occurred while querying live information'
+    });
+  }
+});
+
 // --- 2. Orders Management Endpoints ---
 app.get('/api/orders', (_req: Request, res: Response) => {
   res.json({ orders: ordersStore });
