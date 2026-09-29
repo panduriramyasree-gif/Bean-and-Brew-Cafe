@@ -25,6 +25,7 @@ import { CartDrawer } from './components/CartDrawer';
 import { OrderConfirmationModal } from './components/OrderConfirmationModal';
 import { CoffeeBuilder } from './components/CoffeeBuilder';
 import { AIBaristaModal } from './components/AIBaristaModal';
+import { N8nChatWidget } from './components/N8nChatWidget';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -314,6 +315,9 @@ export default function App() {
           <span>{toastMessage}</span>
         </div>
       )}
+
+      {/* 8. n8n Embedded Live Chat Widget */}
+      <N8nChatWidget />
 
     </div>
   );

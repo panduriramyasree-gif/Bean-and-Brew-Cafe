@@ -170,27 +170,27 @@ export const MenuPage: React.FC<MenuPageProps> = ({
 
       {/* Floating Bottom Cart Bar for quick checkout */}
       {totalCartItems > 0 && (
-        <div className="fixed bottom-5 left-4 right-4 max-w-xl mx-auto z-30">
-          <div className="bg-[#2C1810] text-[#FFF8F0] px-5 py-3.5 rounded-2xl shadow-xl border border-[#4A2E1B] flex items-center justify-between gap-4 animate-in slide-in-from-bottom duration-300">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#E0A96D] text-[#2C1810] flex items-center justify-center font-bold text-xs tabular-nums shadow-xs">
+        <div className="fixed bottom-5 left-4 right-20 sm:right-24 max-w-xl mx-auto z-30">
+          <div className="bg-[#2C1810] text-[#FFF8F0] px-4 sm:px-5 py-3 sm:py-3.5 rounded-2xl shadow-xl border border-[#4A2E1B] flex items-center justify-between gap-3 animate-in slide-in-from-bottom duration-300">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#E0A96D] text-[#2C1810] flex items-center justify-center font-bold text-xs tabular-nums shadow-xs shrink-0">
                 {totalCartItems}
               </div>
-              <div>
-                <p className="text-xs font-semibold text-white">
-                  {totalCartItems} {totalCartItems === 1 ? 'item' : 'items'} in cart
+              <div className="min-w-0">
+                <p className="text-xs font-semibold text-white truncate">
+                  {totalCartItems} {totalCartItems === 1 ? 'item' : 'items'}
                 </p>
                 <p className="text-[11px] text-[#DFCFC0]">
-                  Subtotal: <strong className="text-[#E0A96D] tabular-nums">₹{cartSubtotal}</strong>
+                  <strong className="text-[#E0A96D] tabular-nums">₹{cartSubtotal}</strong>
                 </p>
               </div>
             </div>
 
             <button
               onClick={onOpenCart}
-              className="px-4 py-2 bg-[#E0A96D] hover:bg-[#D49856] text-[#2C1810] text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+              className="px-3 sm:px-4 py-2 bg-[#E0A96D] hover:bg-[#D49856] text-[#2C1810] text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex items-center gap-1.5 shadow-sm cursor-pointer shrink-0"
             >
-              <span>View Cart</span>
+              <span>Cart</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
